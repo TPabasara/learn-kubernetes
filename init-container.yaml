@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-container
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      command:
+        ["sh", "-c", "echo 'app is running' && sleep 3600"] #"-c" means Run the command echo 'init container' inside the shell.
+        #A shell is a program that provides a text-based interface to interact with an operating system.
+        #busybox is an open-source Unix-like command-line operating system. But it is not a full-fledged operating system.
+  initContainers:
+    - name: busybox
+      image: busybox
+      command: ["sh", "-c"]
+      args:
+        [
+          until `nslookup myservice.default.svc.cluster.local`; do echo 'waiting for myservice.default.svc.cluster.local'; sleep 1; done;,
+        ]
